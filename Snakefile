@@ -42,7 +42,6 @@ rule make_trees:
   input:
     "{region}/algn3.fasta"
   output:
-    "{region}/fasta.Rds",
     "{region}/trees.Rds",
     "{region}/startTrees.nwk"
   params:

@@ -1,7 +1,7 @@
 ## plotting functions ####################################
 
 
-quick_annotated_treeplot <- function( td , annotation='Country', maxdate = NULL){ #date_decimal( max(tr$sts))
+quick_annotated_treeplot <- function( td , annotation='Location', maxdate = NULL){ #date_decimal( max(tr$sts))
   tr = td 
   len <- length(unique(tr$data[[annotation]]))
   if(annotation=='d614g') {
@@ -111,35 +111,21 @@ gg_sarscov2skygrowth <- function(x, metric='growth', log_size=F,date_limits = c(
 }
 
 
-hist_by_location <- function(sequ,geog,geog_levels){
+hist_by_location <- function(sequ){
   subseq <- sequ
-  label_column <- 1
-  if(geog=='Local authority'){ 
-    label_column <- 'lad'
-    subseq <- subseq[subseq[[label_column]]%in%geog_levels,]
-  }else if(geog=='Lineage'){ 
-    label_column <- 'Lineage'
-    subseq <- subseq[subseq[[label_column]]%in%geog_levels,]
-  }else if(geog!='Combined'){
-    label_column <- tolower(geog)
-    subseq <- subseq[subseq[[label_column]]%in%geog_levels,]
-  }
+  label_column <- geog <- 'Location'
+  geog_levels <- region
+  subseq <- subseq[subseq[[label_column]]%in%geog_levels,]
   plt <- ggplot(subseq, aes(x=as.Date(Date), fill=eval(parse(text=label_column)))) +
     geom_histogram(bins=30,alpha=0.5, position="identity", color="black")
-  if(geog=='Country'){
-    countries <- sort(unique(sequ$country))
-    cols <- c('navyblue','turquoise','hotpink','grey','darkorange')
-    names(cols) <- countries
-    colScale <- scale_fill_manual(values = cols)
-    plt = plt + colScale
-  }
+  
   if(geog!='Combined'&length(geog_levels)>1) {
     plt <- plt + guides(fill=guide_legend(title=label_column)) + 
       theme(legend.text=element_text(size=14),legend.title=element_text(size=14),legend.position="top")
   }else{
     plt <- plt + guides(fill=FALSE) #+ scale_fill_brewer(palette='Blues')
   }
-  if(length(geog_levels)<=1&!geog%in%c('Combined','Country')) plt <- plt + scale_fill_brewer(palette='Blues')
+  plt <- plt + scale_fill_brewer(palette='Blues')
   plt + xlab('Date') + ylab ('Count') +
     theme(axis.text=element_text(size=14),axis.title=element_text(size=14) ,panel.grid.major = element_blank(), panel.grid.minor = element_blank(),  panel.background = element_blank())
 }

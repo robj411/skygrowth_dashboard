@@ -4,7 +4,6 @@ run_skygrowth <- function(region){
   # install_github('https://github.com/emvolz/treedater')
   
   path = paste0(region,"/startTrees.nwk") # directory with tree files
-  fsta <- readRDS(paste0(region,"/fasta.Rds"))
   mdfn = 'datasets/gisaid_meta.csv' # path to csv 
   
   use_gtds = TRUE 
@@ -40,7 +39,6 @@ run_skygrowth <- function(region){
     todrop = names( sts ) [ is.na( sts ) ]
     if ( length( todrop ) > (Ntip(tr)-3))
       todrop <- todrop[1:(Ntip(tr)-3)]
-    
     tres <- drop.tip(tr, todrop  )
   
   last_sample_time <- max(unlist(tr2sts),na.rm=T)
@@ -79,7 +77,7 @@ run_skygrowth <- function(region){
     
     # time trees 
     st0 = Sys.time()
-    tds = .cutie_treedater(fsta, ntres = ntrees, threads = nthreads, ncpu = ncpu) 
+    tds = .cutie_treedater(tr3, ntres = ntrees, threads = nthreads, ncpu = ncpu) 
     st1 <- Sys.time()
     print( paste( 'treedater', st1 - st0 ))
     
@@ -87,9 +85,10 @@ run_skygrowth <- function(region){
     # smooth node times 
     if ( use_gtds  & length(tds)>1 ){
       a = capture.output({
-        gtds = parallel::mclapply( tds, function(td) gibbs_jitter( td, returnTrees=2 )[[2]] , mc.cores = ncpu*nthreads )
+        gtds = parallel::mclapply( tds, function(td) gibbs_jitter( td, returnTrees=2 ) , mc.cores = ncpu*nthreads )
       })
-      sg0 = skygrowth1( gtds, tau0 = TAU0, res = RES, ncpu = ncpu ,  tstart = decimal_date(SGSTART), mhsteps = MHSTEPS)
+      gtds1 <- do.call( c, gtds )
+      sg0 = skygrowth1( gtds1, tau0 = TAU0, res = RES, ncpu = ncpu ,  tstart = decimal_date(SGSTART), mhsteps = MHSTEPS)
     } else{
       sg0 = skygrowth1( tds, tau0 = TAU0, res = RES, ncpu = ncpu ,  tstart = decimal_date(SGSTART), mhsteps = MHSTEPS)
       gtds = tds
@@ -110,8 +109,7 @@ run_skygrowth <- function(region){
   
     tr = tres
     sts <- tr2sts 
-    ln <- c()
-    sg_filename <- paste0(region,'/skygrowth3/skygrowth3-sg', ln, '.rds' )
+    sg_filename <- paste0(region,'/skygrowth3/skygrowth3-sg.rds' )
     if(!file.exists(sg_filename)){
       # downsample as needed 
       if ( Ntip( tr ) > maxsize ){
@@ -129,8 +127,8 @@ run_skygrowth <- function(region){
       st1 = Sys.time() 
       print( paste( 'skygrowth', st1 - st0 ))
       
-      saveRDS(gtds, file = paste0(region,'/skygrowth3/skygrowth3-gtds', ln, '.rds' ) )
-      saveRDS(tds, file = paste0(region,'/skygrowth3/skygrowth3-tds', ln, '.rds' ) )
+      saveRDS(gtds, file = paste0(region,'/skygrowth3/skygrowth3-gtds.rds' ) )
+      saveRDS(tds, file = paste0(region,'/skygrowth3/skygrowth3-tds.rds' ) )
       saveRDS(sg, file = sg_filename )
       print( Sys.time() )
     }else{
@@ -138,7 +136,7 @@ run_skygrowth <- function(region){
     }
     sgs <-   sg
   
-  saveRDS(sgs, file=paste0(region,'/skygrowth3/skygrowth3-sgs', '.rds' ) )
+  saveRDS(sgs, file=paste0(region,'/skygrowth3/skygrowth3-sgs.rds' ) )
   
 }
   
