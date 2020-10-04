@@ -91,7 +91,7 @@ run_skygrowth <- function(region){
       sg0 = skygrowth1( gtds1, tau0 = TAU0, res = RES, ncpu = ncpu ,  tstart = decimal_date(SGSTART), mhsteps = MHSTEPS)
     } else{
       sg0 = skygrowth1( tds, tau0 = TAU0, res = RES, ncpu = ncpu ,  tstart = decimal_date(SGSTART), mhsteps = MHSTEPS)
-      gtds = tds
+      gtds1 = tds
     }
     
     # skygrowth 
@@ -99,7 +99,7 @@ run_skygrowth <- function(region){
     sg0$Rmat <- NULL 
     sg0$Ntip = Ntip( tr3 ) 
     
-    list( sg = sg0, gtds = gtds, tds = tds  )
+    list( sg = sg0, gtds = gtds1, tds = tds  )
   }
   
   print( Sys.time() )
