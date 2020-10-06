@@ -3,7 +3,7 @@ run_skygrowth <- function(region){
   # library(devtools)
   # install_github('https://github.com/emvolz/treedater')
   
-  path = paste0(region,"/startTrees.nwk") # directory with tree files
+  path = paste0(region,"/trees.Rds") # directory with tree files
   mdfn = 'datasets/gisaid_meta.csv' # path to csv 
   
   use_gtds = TRUE 
@@ -20,14 +20,14 @@ run_skygrowth <- function(region){
   CLOCKRATE <- 0.0008254
   TAU0 <- 1e-5
   
-  tres = read.tree( path )
+  tres = readRDS( path )[[1]]
   
   md = read.csv(mdfn,  stringsAs=FALSE, header=TRUE)
   md$sequence_name <- sapply(md$seqName,function(x)strsplit(as.character(x),'\\|')[[1]][2])
   tips <- sapply(tres$tip,function(y)strsplit(as.character(y),'\\|')[[1]][2])
   
   md <- md[md$sequence_name%in%tips,]
-  md$sample_time <- decimal_date( as.Date( md$date_submitted ))
+  md$sample_time <- decimal_date( as.Date( md$sampleDate ))
   
     tr <- tres
     nm <- sapply(tr$tip,function(x)strsplit(as.character(x),'\\|')[[1]][2])
@@ -41,9 +41,7 @@ run_skygrowth <- function(region){
       todrop <- todrop[1:(Ntip(tr)-3)]
     tres <- drop.tip(tr, todrop  )
   
-  last_sample_time <- max(unlist(tr2sts),na.rm=T)
-  
-  .cutie_treedater <- function (tr, ntres = 10, threads = 1, ncpu = 5, mrl = c(CLOCKRATE, CLOCKRATE+1E-5)) 
+  .cutie_treedater <- function (tr, ntres = 10, threads = 1, ncpu = 5, mrl = c(CLOCKRATE, CLOCKRATE+1E-4)) 
   {
     
     sts <- sapply(strsplit(tr$tip.label, "\\|"), function(x) {
@@ -59,7 +57,7 @@ run_skygrowth <- function(region){
     })
     tds <- parallel::mclapply(tres, function(tr) {
       dater(unroot(tr)
-            , sts[tr$tip.label]
+            , tr$sts  # sts[tr$tip.label]
             , s = 29000
             , meanRateLimits = mrl
             , ncpu = ncpu
