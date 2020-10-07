@@ -126,7 +126,7 @@ hist_by_location <- function(sequ){
     plt <- plt + guides(fill=FALSE) #+ scale_fill_brewer(palette='Blues')
   }
   plt <- plt + scale_fill_brewer(palette='Blues')
-  plt + xlab('Date') + ylab ('Count') +
+  plt + xlab('Date') + ylab ('Number of samples') +
     theme(axis.text=element_text(size=14),axis.title=element_text(size=14) ,panel.grid.major = element_blank(), panel.grid.minor = element_blank(),  panel.background = element_blank())
 }
 
@@ -142,6 +142,6 @@ barplot_by_region <- function(sequ,lin,plotby='region',timerange=NULL){
   #}else{
   plt <- plt + guides(fill=FALSE)
   #}
-  plt + xlab('') + ylab ('Count') + coord_flip() +
+  plt + xlab('') + ylab ('Number of samples') + coord_flip() +
     theme(axis.text=element_text(size=14),axis.title=element_text(size=14) ,panel.grid.major = element_blank(), panel.grid.minor = element_blank(),  panel.background = element_blank())
 }
