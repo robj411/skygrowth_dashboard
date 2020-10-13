@@ -16,7 +16,13 @@ To use a profile for cluster parallelisation:
 ```
 mkdir -p ~/.config/snakemake
 cd ~/.config/snakemake
-cookiecutter https://github.com/Snakemake-Profiles/pbs-torque.git
+cookiecutter https://github.com/Snakemake-Profiles/pbs-torque.git profile_name=profile
+```
+
+To the job script, one can add module loads and paths as required:
+
+```
+module load anaconda3/personal
 ```
 
 ### R requirements
