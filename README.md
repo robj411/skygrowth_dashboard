@@ -54,7 +54,7 @@ install_github('mrc-ide/skygrowth')
 
 ### Other requirements
 
-An alignment is required, such as can be downloaded and extracted from [www.gisaid.org](https://www.gisaid.org). It should be saved as `algn3.fasta` in the target directory, e.g. [Peru/algn3.fasta](Peru/algn3.fasta). 
+An alignment is required, such as can be downloaded and extracted from [www.gisaid.org](https://www.gisaid.org). It should be saved as `algn3.fasta` in the target directory, e.g. [Peru/algn3.fasta](Peru/algn3.fasta). Sequence names should include the GISAID name.
 
 ## 2. Running the pipeline
 
