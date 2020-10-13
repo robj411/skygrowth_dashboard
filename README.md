@@ -1,12 +1,13 @@
 # Skygrowth dashboard
 
-## Pre-requisites
+## 1. Pre-requisites
 
 ### System requirements
 
 To run in an environment:
 
 ```
+conda install -c bioconda snakemake
 conda install iqtree
 conda install R
 ```
@@ -55,7 +56,7 @@ install_github('mrc-ide/skygrowth')
 
 An alignment is required, such as can be downloaded and extracted from [www.gisaid.org](www.gisaid.org). It should be saved as `algn3.fasta` in the target directory, e.g. [Peru/algn3.fasta](Peru/algn3.fasta). 
 
-## Running the pipeline
+## 2. Running the pipeline
 
 ```
 module load anaconda3/personal
@@ -69,7 +70,7 @@ or, to run locally using one core,
 snakemake --config population=5400000 region="Norway" -j1
 ```
 
-## Running the app
+## 3. Running the app
 
 In R, run the app locally, or remotely:
 
