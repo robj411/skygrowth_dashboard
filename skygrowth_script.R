@@ -4,7 +4,7 @@ run_skygrowth <- function(region){
   # install_github('https://github.com/emvolz/treedater')
   
   path = paste0(region,"/trees.Rds") # directory with tree files
-  mdfn = 'datasets/gisaid_meta.csv' # path to csv 
+  mdfn = 'datasets/gisaid.tsv' # path to gisaid metadata 
   
   use_gtds = TRUE 
   minsize = 50
@@ -22,15 +22,15 @@ run_skygrowth <- function(region){
   
   tres = readRDS( path )[[1]]
   
-  md = read.csv(mdfn,  stringsAs=FALSE, header=TRUE)
-  md$sequence_name <- sapply(md$seqName,function(x)strsplit(as.character(x),'\\|')[[1]][2])
+  md = read.csv(mdfn, sep='\t', stringsAs=FALSE, header=TRUE)
+  md$sequence_name <- md$gisaid_epi_isl  # sapply(md$seqName,function(x)strsplit(as.character(x),'\\|')[[1]][2])
   tips <- sapply(tres$tip,function(y)strsplit(as.character(y),'\\|')[[1]][2])
   
   md <- md[md$sequence_name%in%tips,]
-  md$sample_time <- decimal_date( as.Date( md$sampleDate ))
+  md$sample_time <- decimal_date( as.Date( md$date ))
   
     tr <- tres
-    nm <- sapply(tr$tip,function(x)strsplit(as.character(x),'\\|')[[1]][2])
+    nm <- str_extract(tr$tip,'EPI_ISL_[0-9]{6}') # sapply(tr$tip,function(x)strsplit(as.character(x),'\\|')[[1]][2])
     tr2sts <- setNames( md[ match(nm,md$sequence_name) , 'sample_time'] , tr$tip.label )
 
   #fix seq id, remove missing sts
