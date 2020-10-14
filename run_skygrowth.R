@@ -8,6 +8,7 @@ require(lubridate)
 require(limSolve)
 library(skygrowth)
 library( treedater )
+require(stringr)
 
 source('skygrowth_script.R')
 
