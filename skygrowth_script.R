@@ -29,17 +29,17 @@ run_skygrowth <- function(region){
   md <- md[md$sequence_name%in%tips,]
   md$sample_time <- decimal_date( as.Date( md$date ))
   
-    tr <- tres
-    nm <- str_extract(tr$tip,'EPI_ISL_[0-9]{6}') # sapply(tr$tip,function(x)strsplit(as.character(x),'\\|')[[1]][2])
-    tr2sts <- setNames( md[ match(nm,md$sequence_name) , 'sample_time'] , tr$tip.label )
-
+  tr <- tres
+  nm <- str_extract(tr$tip,'EPI_ISL_[0-9]{6}') # sapply(tr$tip,function(x)strsplit(as.character(x),'\\|')[[1]][2])
+  tr2sts <- setNames( md[ match(nm,md$sequence_name) , 'sample_time'] , tr$tip.label )
+  
   #fix seq id, remove missing sts
-    sts = tr2sts #[[k]]
-    tr = tres #[[k]]
-    todrop = names( sts ) [ is.na( sts ) ]
-    if ( length( todrop ) > (Ntip(tr)-3))
-      todrop <- todrop[1:(Ntip(tr)-3)]
-    tres <- drop.tip(tr, todrop  )
+  sts = tr2sts #[[k]]
+  tr = tres #[[k]]
+  todrop = names( sts ) [ is.na( sts ) ]
+  if ( length( todrop ) > (Ntip(tr)-3))
+    todrop <- todrop[1:(Ntip(tr)-3)]
+  tres <- drop.tip(tr, todrop  )
   
   .cutie_treedater <- function (tr, ntres = 10, threads = 1, ncpu = 5, mrl = c(CLOCKRATE, CLOCKRATE+1E-4)) 
   {
@@ -67,6 +67,7 @@ run_skygrowth <- function(region){
     }, mc.cores = threads)
     tds
   }
+  
   .lineage_skygrowth <- function(tr, sts)
   {
     # labels 

@@ -9,6 +9,7 @@ require(limSolve)
 require(skygrowth)
 require(treedater)
 require(dplyr)
+require(stringr)
 
 source('alignment_to_tree.R')
 

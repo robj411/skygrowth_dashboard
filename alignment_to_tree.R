@@ -13,6 +13,19 @@ get_region_tree <- function(rerun=F){
   # Make the starting trees
   if(!file.exists(nwk_file)|!file.exists(tree_file)){
     if (inherits(fastafn, "phylo")) {
+      labs <- fastafn$tip.label
+    }else{ 
+      d <- read.dna(fastafn, format = "fasta")
+      labs <- dimnames(d)[[1]]
+    }
+    spltlabs <- sapply(labs,function(x)strsplit(x,'\\|')[[1]])
+    epi <- sum(!grepl('^EPI_ISL_[0-9]{6}$',spltlabs[2,]))
+    dt <- sum(!str_detect(spltlabs[3,],'^([0-9]{4}[:punct:][0-9]{2}[:punct:][0-9]{2})|([0-9]{2}[:punct:][0-9]{2}[:punct:][0-9]{4})$'))
+    if(epi | dt){
+      stop('Sequence names must be pipe-separated strings with GISAID ID (e.g. EPI_ISL_420899) in position 2 and date (e.g. 2020-03-11) in position 3.' )
+    }
+    
+    if (inherits(fastafn, "phylo")) {
       tr <- fastafn
     }else{ 
       tr = .mltr(fastafn)
