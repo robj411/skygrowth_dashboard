@@ -17,7 +17,7 @@ if(length(args)==0){
 
 setwd(region)
 
-lineages <- list()#readRDS('datasets/skygrowth1/skygrowth1.sgs.rds')
+lineages <- list()
 
 files <- list.files('./skygrowth3/')
 gtdsfiles <- files[sapply(files,function(x)grepl('\\-gtds',x))]
@@ -30,12 +30,12 @@ sequences <- list()
 orig_trees <- readRDS(paste0('trees.Rds'))
 i <- which.max(sapply(orig_trees,function(y)y[[7]]))
 
-md <- read.csv( '../datasets/gisaid_meta.csv', stringsAs=FALSE ) 
-locs <- c('Country','RegionOrState','CityOrCounty')
+md <- read.csv( '../datasets/gisaid.tsv',sep='\t', stringsAs=FALSE ) 
+locs <- c('country','division','location')
 loc <- locs[which(sapply(locs,function(x)region%in%md[[x]]) )[1]]
 md$Location <- md[[loc]]
-md$Date <- md$sampleDate
-md$Sequence <- sapply(md$seqName,function(y)strsplit(y,'\\|')[[1]][1])
+md$Date <- md$date
+md$Sequence <- md$strain # sapply(md$seqName,function(y)strsplit(y,'\\|')[[1]][1])
 
 lineages <- readRDS(paste0('skygrowth3/',sgfiles[i]))
 x <- readRDS(paste0('skygrowth3/',gtdsfiles[i]))
