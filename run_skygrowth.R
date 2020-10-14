@@ -1,4 +1,4 @@
-# load packages
+# load libraries
 require(sarscov2)
 require(ape)
 require(phangorn)
@@ -10,7 +10,7 @@ library(skygrowth)
 library( treedater )
 require(stringr)
 
-source('skygrowth_script.R')
+source('prep_functions.R')
 
 
 ## A simple name for the region, state, or country:

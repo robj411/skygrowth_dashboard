@@ -1,4 +1,4 @@
-# load packages
+# load libraries
 library(dplyr)
 library(sarscov2)
 

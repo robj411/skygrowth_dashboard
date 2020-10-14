@@ -11,7 +11,7 @@ require(treedater)
 require(dplyr)
 require(stringr)
 
-source('alignment_to_tree.R')
+source('prep_functions.R')
 
 
 ## A simple name for the region, state, or country:

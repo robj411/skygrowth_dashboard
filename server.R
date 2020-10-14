@@ -12,7 +12,7 @@ library(dplyr)
 library(RColorBrewer)
 library(plotrix)
 library(svDialogs)
-source('functions.R')
+source('shiny_functions.R')
 
 #scale_fill_discrete <- function(...) {
 #  scale_fill_brewer(..., palette="Accent")
