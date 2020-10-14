@@ -1,5 +1,5 @@
 
-get_region_tree <- function(region, population=1100000,rerun=F){
+get_region_tree <- function(rerun=F){
   
   
   tree_file <- paste0("trees.Rds")
@@ -8,15 +8,6 @@ get_region_tree <- function(region, population=1100000,rerun=F){
   end_files <- c(tree_file,nwk_file)
   if(sum(file.exists(end_files))==length(end_files)&rerun==F) return()
   
-  # define some parameters 
-  ## When do internal SEIR dynamics initiate: 
-  startTime = 2020.15
-  ## What is the population size of the region of interest?
-  popSize = population
-  ## How many sequences to include within the region?
-  n_region = 1000
-  ## How many to include from the international reservoir?
-  n_reservoir = 50 # (actual number to be included will be greater since it also includes close distance matches)
   n_startingtrees = 1
   
   # Make the starting trees

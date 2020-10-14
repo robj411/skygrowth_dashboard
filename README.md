@@ -62,13 +62,13 @@ An alignment is required, such as can be downloaded and extracted from [www.gisa
 ```
 module load anaconda3/personal
 source activate snakemake
-snakemake --config population=5400000 region="Norway" --profile profile
+snakemake --config region="Norway" --profile profile
 ```
 
 or, to run locally using one core,
 
 ```
-snakemake --config population=5400000 region="Norway" -j1
+snakemake --config region="Norway" -j1
 ```
 
 ## 3. Running the app

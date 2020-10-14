@@ -3,7 +3,7 @@ run_skygrowth <- function(region){
   # library(devtools)
   # install_github('https://github.com/emvolz/treedater')
   
-  path = paste0(region,"/trees.Rds") # directory with tree files
+  path = paste0(region,"/trees.Rds") # directory with tree file
   mdfn = 'datasets/gisaid.tsv' # path to gisaid metadata 
   
   use_gtds = TRUE 

@@ -6,12 +6,9 @@ library(sarscov2)
 args = commandArgs(trailingOnly=TRUE)
 print(args)
 if(length(args)==0){
-  region <- 'Munich'; population <- 1500000
-  region <- 'Sweden'; population <- 10230000
-  region <- 'Switzerland'; population <- 8570000
+  region <- 'Peru'
 }else{
   region <- args[1]
-  population <- as.numeric(args[2])
 }
 
 

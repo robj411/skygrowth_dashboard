@@ -35,7 +35,7 @@ rule run_skygrowth:
   params:
     rg="{region}"
   shell:
-    "R --vanilla --args '{params.rg}' {config[population]} < run_skygrowth.R  > '{params.rg}.log' 2> '{params.rg}.log'"
+    "R --vanilla --args '{params.rg}' < run_skygrowth.R  > '{params.rg}.log' 2> '{params.rg}.log'"
 
 
 rule make_trees:
@@ -47,7 +47,7 @@ rule make_trees:
   params:
     rg="{region}"
   shell:
-    "R --vanilla --args '{params.rg}' {config[population]} < make_trees.R  > '{params.rg}.log' 2> '{params.rg}.log'"
+    "R --vanilla --args '{params.rg}' < make_trees.R  > '{params.rg}.log' 2> '{params.rg}.log'"
 
 rule make_alignment:
   output:
@@ -55,7 +55,7 @@ rule make_alignment:
   params:
     rg="{region}"
   shell:
-    "R --vanilla --args '{params.rg}' {config[population]} < make_alignment.R  > '{params.rg}.log' 2> '{params.rg}.log'"
+    "R --vanilla --args '{params.rg}' < make_alignment.R  > '{params.rg}.log' 2> '{params.rg}.log'"
 
 
 

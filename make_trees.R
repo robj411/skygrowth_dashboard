@@ -1,4 +1,4 @@
-# load packages
+# load libraries
 require(sarscov2)
 require(ape)
 require(phangorn)
@@ -6,9 +6,9 @@ require(ggplot2)
 require(ggtree)
 require(lubridate)
 require(limSolve)
-library(skygrowth)
-library( treedater )
-library(dplyr,quietly = T)
+require(skygrowth)
+require(treedater)
+require(dplyr)
 
 source('alignment_to_tree.R')
 
@@ -17,16 +17,13 @@ source('alignment_to_tree.R')
 args = commandArgs(trailingOnly=TRUE)
 print(args)
 if(length(args)==0){
-  region <- 'Munich'; population <- 1500000
-  region <- 'Sweden'; population <- 10230000
-  region <- 'Switzerland'; population <- 8570000
+  region <- 'Peru'
 }else{
   region <- args[1]
-  population <- as.numeric(args[2])
 }
 
 
 if(!(dir.exists( region ))) dir.create( region )
 setwd(region)
 
-get_region_tree(region,population=population)
+get_region_tree()
