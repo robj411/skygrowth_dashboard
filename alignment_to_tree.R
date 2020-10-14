@@ -8,11 +8,6 @@ get_region_tree <- function(region, population=1100000,rerun=F){
   end_files <- c(tree_file,nwk_file)
   if(sum(file.exists(end_files))==length(end_files)&rerun==F) return()
   
-  # Load the edited gisaid metadata 
-  md <- read.csv( '../datasets/gisaid_meta.csv', stringsAs=FALSE ) 
-  if(!region%in%c(unique(md$Country),unique(md$RegionOrState),unique(md$CityOrCounty))) 
-    stop(paste0('\n"',region,'" is not among cities, counties, countries, regions and states.\n\n'))
-  
   # define some parameters 
   ## When do internal SEIR dynamics initiate: 
   startTime = 2020.15
