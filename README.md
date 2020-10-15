@@ -7,6 +7,10 @@
 To run in an environment:
 
 ```
+module load anaconda3/personal
+anaconda-setup
+conda create -n snakemake
+source activate snakemake
 conda install -c bioconda snakemake
 conda install iqtree
 conda install R
