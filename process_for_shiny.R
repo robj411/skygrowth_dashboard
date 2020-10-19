@@ -32,7 +32,7 @@ locs <- c('country','division','location')
 loc <- locs[which(sapply(locs,function(x)region%in%md[[x]]) )[1]]
 md$Location <- md[[loc]]
 md$Date <- md$date
-md$Sequence <- md$strain # sapply(md$seqName,function(y)strsplit(y,'\\|')[[1]][1])
+md$Sequence <- paste0('hCoV-19/',md$strain) # sapply(md$seqName,function(y)strsplit(y,'\\|')[[1]][1])
 
 lineages <- readRDS(paste0('skygrowth3/',sgfiles[i]))
 x <- readRDS(paste0('skygrowth3/',gtdsfiles[i]))
