@@ -82,12 +82,11 @@ shiny::shinyServer(function(input, output, session) {
   
   ## observe input events
   ## geography ########################################################
-  
   ## plot hist for geography
   observeEvent({input$ti_region},
                {
     output$hist_by_location <- renderPlot({
-      hist_by_location(parms$sequences)
+      plot_sample_distribution(parms$tree)
     })#, 
     #height = 3*hgt+500)
   })
@@ -131,6 +130,7 @@ shiny::shinyServer(function(input, output, session) {
     #hgt <- length(parms$tree[[l_ind]]$Ti)
     #output$tree <- renderPlot({
       output$tree <- renderPlotly({
+        #quick_region_treeplot(parms$tree,'Il')
         quick_annotated_treeplot(parms$tree,annotation = anno) #%>% layout(height = 3*hgt+500)
       })#, 
     #height = 3*hgt+500)
@@ -139,7 +139,8 @@ shiny::shinyServer(function(input, output, session) {
   ## imports #################################################
   observeEvent({input$ti_region},{
     output$imports <- renderPlot({
-      plot_importations(parms$imports)
+      par(mar=c(5,5,2,2))
+      plot_importations(parms$imports,cex.axis=1.5,cex.lab=1.5) 
     })
   })
   
