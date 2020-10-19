@@ -55,7 +55,7 @@ parms$lineages <- lineages
 
 
 pldf <- compute_timports( orig_trees )
-parms$imports <- pldf
+parms$imports <- pldf[[1]]
 
 saveRDS(parms,paste0(region,'.Rds'))
 saveRDS(parms,paste0('../input_files/',region,'.Rds'))

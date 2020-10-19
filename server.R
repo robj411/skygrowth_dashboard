@@ -139,7 +139,7 @@ shiny::shinyServer(function(input, output, session) {
   ## imports #################################################
   observeEvent({input$ti_region},{
     output$imports <- renderPlot({
-      plot_importations(parms$imports[[1]])
+      plot_importations(parms$imports)
     })
   })
   
