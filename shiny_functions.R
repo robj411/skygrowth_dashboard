@@ -111,37 +111,19 @@ gg_sarscov2skygrowth <- function(x, metric='growth', log_size=F,date_limits = c(
 }
 
 
-hist_by_location <- function(sequ){
-  subseq <- sequ
-  label_column <- geog <- 'Location'
-  geog_levels <- region
-  subseq <- subseq[subseq[[label_column]]%in%geog_levels,]
-  plt <- ggplot(subseq, aes(x=as.Date(Date), fill=eval(parse(text=label_column)))) +
-    geom_histogram(bins=30,alpha=0.5, position="identity", color="black")
-  
-  if(geog!='Combined'&length(geog_levels)>1) {
-    plt <- plt + guides(fill=guide_legend(title=label_column)) + 
-      theme(legend.text=element_text(size=14),legend.title=element_text(size=14),legend.position="top")
-  }else{
-    plt <- plt + guides(fill=FALSE) #+ scale_fill_brewer(palette='Blues')
-  }
-  plt <- plt + scale_fill_brewer(palette='Blues')
-  plt + xlab('Date') + ylab ('Number of samples') +
-    theme(axis.text=element_text(size=14),axis.title=element_text(size=14) ,panel.grid.major = element_blank(), panel.grid.minor = element_blank(),  panel.background = element_blank())
-}
-
-barplot_by_region <- function(sequ,lin,plotby='region',timerange=NULL){
-  category <- c('Lineage','region')[which(c('Lineage','region')!=plotby)]
-  subseq <- sequ[sequ[[category]]==lin,]
-  if(!is.null(timerange)) subseq <- subset(subseq,Date<=timerange[2]&Date>=timerange[1])
-  plt <- ggplot(subseq, aes(x=eval(parse(text=plotby)))) +
-    geom_bar(color="black")
-  #if(geog!='Combined') {
-  #  plt <- plt + guides(fill=guide_legend(title=label_column)) + 
-  #    theme(legend.text=element_text(size=14),legend.title=element_text(size=14),legend.position="top")
-  #}else{
-  plt <- plt + guides(fill=FALSE)
-  #}
-  plt + xlab('') + ylab ('Number of samples') + coord_flip() +
-    theme(axis.text=element_text(size=14),axis.title=element_text(size=14) ,panel.grid.major = element_blank(), panel.grid.minor = element_blank(),  panel.background = element_blank())
+plot_sample_distribution <- function (trees) {
+  nex <- trees
+  algn3 = data.frame(seq_id = nex$tip.label) %>% 
+    separate(seq_id, c("Seq_ID", "GISAID", "Date", "Date_dec", "Region"), "[|]") %>% 
+    mutate(Region = ifelse(Region == "_Il", "Local", "Global")) %>% 
+    mutate(Date = as.Date(date_decimal(as.numeric(Date_dec)), "%Y-%m-%d"))
+  pl = ggplot(algn3, aes(x = Date, color = Region, fill = Region)) + 
+    geom_histogram(aes(y = ..density..), position = "identity", 
+                   alpha = 0.5, bins = as.numeric(max(algn3$Date) - min(algn3$Date)) + 1) + geom_density(alpha = 0.4) + 
+    theme_minimal() + theme(legend.title=element_text(size=14), 
+                  legend.text=element_text(size=12),
+                  axis.text=element_text(size=14),
+                  axis.title=element_text(size=14)) + scale_color_manual(values = c("#999999", "#E69F00")) + 
+    scale_fill_manual(values = c("#999999", "#E69F00")) + labs(x = "", y = "Sampling density")
+  return(pl)
 }
