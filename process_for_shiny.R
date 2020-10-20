@@ -40,7 +40,7 @@ maxind <- which.max(sapply(x,function(y)y[[7]]))
 trees <- x[[maxind]]
 trees$tip.label <- unname(trees$tip.label)
 trees$intree$tip.label <- unname(trees$intree$tip.label)
-parms$tree$lnd.mean.rate.prior <- NULL
+trees$lnd.mean.rate.prior <- NULL
 sequences <- as.data.frame(cbind(sapply(x[[1]]$tip.label,function(y)strsplit(y,'\\|')[[1]][1]),ids[i])) 
 colnames(sequences) <- c('Sequence','Lineage')
 sequences <- left_join(sequences,md[,colnames(md)%in%c('Sequence','Location','Date')],by='Sequence')
