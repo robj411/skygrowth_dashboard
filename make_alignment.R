@@ -29,35 +29,35 @@ print(region)
 fastafn <- paste0("algn3.fasta")
   
 # Load the edited gisaid metadata 
-md <- read.csv( '../datasets/msa_0902/meta.csv', stringsAs=FALSE ) 
-if(!region%in%c(unique(md$Country),unique(md$RegionOrState),unique(md$CityOrCounty))) 
+md <- read.csv( '../datasets/gisaid.tsv',sep='\t', stringsAs=FALSE ) 
+if(!region%in%c(unique(md$country),unique(md$location),unique(md$division))) 
   stop(paste0('\n"',region,'" is not among cities, counties, countries, regions and states.\n\n'))
-  
+seqnm <- paste0('hCoV-19/',md$strain)
+md$seqName <- sapply(1:length(seqnm),function(x)paste0(c(seqnm[x],md$gisaid_epi_isl[x],md$date[x],md$region[x]),collapse='|'))
+md$sampleDate <- md$date
+
 ## path to the GISAID alignment: 
-gisaid_file <- '../datasets/msa_0902/gisaid.fas'
+gisaid_file <- '../datasets/gisaid.fasta'
 ## A path to the file containing small genetic distance pairs
-distfn = '../datasets/data_0820/tn93.txt'
+distfn = '../datasets/tn93.txt'
   
 # define some parameters 
-## When do internal SEIR dynamics initiate: 
-startTime = 2020.15
 ## How many sequences to include within the region?
 n_region = 1000
 ## How many to include from the international reservoir?
 n_reservoir = 50 # (actual number to be included will be greater since it also includes close distance matches)
-## How many starting trees? A BEAST run will be carried out for each 
 n_startingtrees = 1
   
   
 # Set dedup = TRUE in region sampler and exog sampler to remove duplicate sequences
-md2 <- read.csv(distfn,sep=',',stringsAsFactors = F)
-regiontips = region_sampler1( md, n = n_region  , inclusion_rules = list( c('CityOrCounty', paste0('^',region,'$')),
-                                                                              c('RegionOrState', paste0('^',region,'$')),
-                                                                              c('Country', paste0('^',region,'$'))), dedup = FALSE, time_stratify=F)
+regiontips = region_sampler1( md, n = n_region  , inclusion_rules = list( c('country', paste0('^',region,'$')),
+                                                                              c('location', paste0('^',region,'$')),
+                                                                              c('division', paste0('^',region,'$'))), dedup = FALSE, time_stratify=F)
 # Sample a set of closely related external sequences, 
-exogtips = exog_sampler2( md, n=n_reservoir, smallGDpairs=md2, region_sample=regiontips, exclusion_rules = list( c('CityOrCounty', paste0('^',region,'$')),
-                                                                                                                     c('RegionOrState', paste0('^',region,'$')),
-                                                                                                                     c('Country', paste0('^',region,'$')) ), dedup= FALSE )
+md2 <- read.csv(distfn,sep=',',stringsAsFactors = F)
+exogtips = exog_sampler2( md, n=n_reservoir, smallGDpairs=md2, region_sample=regiontips, exclusion_rules = list( c('division', paste0('^',region,'$')),
+                                                                                                                     c('location', paste0('^',region,'$')),
+                                                                                                                     c('country', paste0('^',region,'$')) ), dedup= FALSE )
 # You could select based on a different geographic criterion, current fields in metadata are  "Continent" "Country" "RegionOrState" "CityOrCounty"
 rm(md2)
 #~ Here is a subset of the metadata that corresponds to the sample. Check this carefully- is the sample including everything you want and not including things you dont want?
