@@ -113,8 +113,10 @@ gg_sarscov2skygrowth <- function(x, metric='growth', log_size=F,date_limits = c(
 
 plot_sample_distribution <- function (trees) {
   nex <- trees
+  colheaders <- c("Seq_ID", "GISAID", "Date", "Date_dec", "Region")
+  if(length(strsplit(nex$tip.label[1],'\\|')[[1]])==6) colheaders <- c("Seq_ID", "GISAID", "Date","Continent", "Date_dec", "Region")
   algn3 = data.frame(seq_id = nex$tip.label) %>% 
-    separate(seq_id, c("Seq_ID", "GISAID", "Date", "Date_dec", "Region"), "[|]") %>% 
+    separate(seq_id, colheaders, "[|]") %>% 
     mutate(Region = ifelse(Region == "_Il", "Local", "Global")) %>% 
     mutate(Date = as.Date(date_decimal(as.numeric(Date_dec)), "%Y-%m-%d"))
   pl = ggplot(algn3, aes(x = Date, color = Region, fill = Region)) + 
