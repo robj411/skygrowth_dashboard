@@ -6,7 +6,7 @@ require(ggplot2)
 require(ggtree)
 require(lubridate)
 require(limSolve)
-library( treedater )
+require(treedater)
 
 
 ## A simple name for the region, state, or country:
