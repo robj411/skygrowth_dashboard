@@ -30,9 +30,23 @@ get_region_tree <- function(rerun=F){
     }else{ 
       tr = .mltr(fastafn)
     }
+    saveRDS(tr,'pretree.Rds')
+    max_length <- decimal_date(today())-decimal_date(as.Date("2019-10-01"))
     
-    # Note requires IQTREE, ncpu > 1 will not work on windows
-    tds = make_starting_trees(tr, treeoutfn = nwk_file, ntres = n_startingtrees, ncpu = 6)
+    treeok <- F
+    while(!treeok){
+      
+      # Note requires IQTREE, ncpu > 1 will not work on windows
+      tds = make_starting_trees(tr, treeoutfn = nwk_file, ntres = n_startingtrees, ncpu = 6)
+      
+      lnths <- tds[[1]]$edge.length[ match( 1:Ntip(tds[[1]]) , tds[[1]]$edge[,2] ) ]
+      if(sum(lnths>max_length)==0){
+        treeok <- T
+      }else{
+        tr <- ape::drop.tip(tr,tr$tip.label[lnths>max_length])
+      }
+    }
+      
     # save trees for later
     saveRDS(tds,tree_file)
     rm(tr)

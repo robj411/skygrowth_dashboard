@@ -39,7 +39,7 @@ md$sampleDate <- md$date
 ## path to the GISAID alignment: 
 gisaid_file <- '../datasets/gisaid.fasta'
 ## A path to the file containing small genetic distance pairs
-distfn = '../datasets/tn93.txt'
+#distfn = '../datasets/tn93.txt'
   
 # define some parameters 
 ## How many sequences to include within the region?
@@ -54,7 +54,12 @@ regiontips = region_sampler1( md, n = n_region  , inclusion_rules = list( c('cou
                                                                               c('location', paste0('^',region,'$')),
                                                                               c('division', paste0('^',region,'$'))), dedup = FALSE, time_stratify=F)
 # Sample a set of closely related external sequences, 
-md2 <- read.csv(distfn,sep=',',stringsAsFactors = F)
+#md2 <- read.csv(distfn,sep=',',stringsAsFactors = F)
+
+nms <- readRDS('../names.Rds')
+dists <- readRDS('../snp_dist.Rds')
+md2 <- data.frame(ID1=as.character(nms[dists[,1]]),ID2=as.character(nms[dists[,2]]),Distance=dists[,3])
+
 exogtips = exog_sampler2( md, n=n_reservoir, smallGDpairs=md2, region_sample=regiontips, exclusion_rules = list( c('division', paste0('^',region,'$')),
                                                                                                                      c('location', paste0('^',region,'$')),
                                                                                                                      c('country', paste0('^',region,'$')) ), dedup= FALSE )
