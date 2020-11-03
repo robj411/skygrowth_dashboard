@@ -53,9 +53,12 @@ rule make_alignment:
   output:
     "{region}/algn3.fasta"
   params:
-    rg="{region}"
+    rg="{region}",
+    nrg=config['n_region'],
+    nres=config['n_reservoir'],
+    miss=config['missingness_threshold']
   shell:
-    "R --vanilla --args '{params.rg}' < make_alignment.R  > '{params.rg}.log' 2> '{params.rg}.log'"
+    "R --vanilla --args '{params.rg}' '{params.nrg}' '{params.nres}' '{params.miss}' < make_alignment.R  > '{params.rg}.log' 2> '{params.rg}.log'"
 
 
 

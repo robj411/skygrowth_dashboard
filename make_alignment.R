@@ -11,13 +11,22 @@ require(treedater)
 
 ## A simple name for the region, state, or country:
 args = commandArgs(trailingOnly=TRUE)
-print(args)
 if(length(args)==0){
   region <- 'Munich'
   region <- 'Sweden'
   region <- 'Switzerland'
+  ## How many sequences to include within the region?
+  n_region = 1000
+  ## How many to include from the international reservoir?
+  n_reservoir = 50 # (actual number to be included will be greater since it also includes close distance matches)
+  missing_threshold <- 0.9
 }else{
   region <- args[1]
+  ## How many sequences to include within the region?
+  n_region = as.numeric(args[2])
+  ## How many to include from the international reservoir?
+  n_reservoir = as.numeric(args[3]) # (actual number to be included will be greater since it also includes close distance matches)
+  missing_threshold <- as.numeric(args[4])
 }
 
 
@@ -41,11 +50,6 @@ gisaid_file <- '../datasets/gisaid.fasta'
 ## A path to the file containing small genetic distance pairs
 #distfn = '../datasets/tn93.txt'
   
-# define some parameters 
-## How many sequences to include within the region?
-n_region = 1000
-## How many to include from the international reservoir?
-n_reservoir = 50 # (actual number to be included will be greater since it also includes close distance matches)
 n_startingtrees = 1
   
   
@@ -79,6 +83,8 @@ prep_tip_labels_seijr <- function (algnfn, outfn, regiontips, exogtips, metadata
   sts <- setNames(lubridate::decimal_date(lubridate::ymd(as.character(.md$sampleDate))), 
                   .md$seqName)
   dd = d[s, ]
+  nonmissing <- sapply(1:nrow(dd),function(x)sum(base.freq(dd[x,],all=T)[1:4])>missing_threshold)
+  dd <- dd[nonmissing,]
   rm(d)
   nms = rownames(dd)
   demes <- setNames(rep("exog", length(nms)), nms)
