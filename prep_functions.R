@@ -23,8 +23,8 @@ get_alignment_function <- function(region,n_region,n_reservoir,missing_threshold
   ## A path to the file containing small genetic distance pairs
   #md2 <- read.csv('../datasets/tn93.txt',sep=',',stringsAsFactors = F)
   # distances from pairsnp
-  nms <- readRDS('../names.Rds')
-  dists <- readRDS('../snp_dist.Rds')
+  nms <- readRDS('../datasets/names.Rds')
+  dists <- readRDS('../datasets/snp_dist.Rds')
   md2 <- data.frame(ID1=as.character(nms[dists[,1]]),ID2=as.character(nms[dists[,2]]),Distance=dists[,3])
   
   # Sample a set of closely related external sequences, 
