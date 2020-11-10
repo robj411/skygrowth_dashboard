@@ -1,12 +1,77 @@
 
-get_region_tree <- function(rerun=F){
+get_alignment_function <- function(region,n_region,n_reservoir,missing_threshold){
   
+  ## destination path for extracted alignment
+  fastafn <- paste0("algn3.fasta")
+  
+  ## Load gisaid metadata from www.gisaid.org
+  md <- read.csv( '../datasets/gisaid.tsv',sep='\t', stringsAs=FALSE ) 
+  if(!region%in%c(unique(md$country),unique(md$location),unique(md$division))) 
+    stop(paste0('\n"',region,'" is not among cities, counties, countries, regions and states.\n\n'))
+  seqnm <- paste0('hCoV-19/',md$strain)
+  md$seqName <- sapply(1:length(seqnm),function(x)paste0(c(seqnm[x],md$gisaid_epi_isl[x],md$date[x],md$region[x]),collapse='|'))
+  md$sampleDate <- md$date
+  
+  ## path to the GISAID alignment
+  gisaid_file <- '../datasets/gisaid.fasta'
+  
+  # Set dedup = TRUE in region sampler and exog sampler to remove duplicate sequences
+  regiontips = region_sampler1( md, n = n_region  , inclusion_rules = list( c('country', paste0('^',region,'$')),
+                                                                            c('location', paste0('^',region,'$')),
+                                                                            c('division', paste0('^',region,'$'))), dedup = FALSE, time_stratify=F)
+  
+  ## A path to the file containing small genetic distance pairs
+  #md2 <- read.csv('../datasets/tn93.txt',sep=',',stringsAsFactors = F)
+  # distances from pairsnp
+  nms <- readRDS('../names.Rds')
+  dists <- readRDS('../snp_dist.Rds')
+  md2 <- data.frame(ID1=as.character(nms[dists[,1]]),ID2=as.character(nms[dists[,2]]),Distance=dists[,3])
+  
+  # Sample a set of closely related external sequences, 
+  exogtips = exog_sampler2( md, n=n_reservoir, smallGDpairs=md2, region_sample=regiontips, exclusion_rules = list( c('division', paste0('^',region,'$')),
+                                                                                                                   c('location', paste0('^',region,'$')),
+                                                                                                                   c('country', paste0('^',region,'$')) ), dedup= FALSE )
+  
+  rm(md2)
+  
+  prep_tip_labels_seijr <- function (algnfn, outfn, regiontips, exogtips, metadata) {
+    md = metadata
+    # read in global alignment
+    d = read.dna(algnfn, "fasta")
+    rownames(d) <- sapply(rownames(d),function(x)gsub(' ','',x))
+    # extract tips
+    s = intersect(c(regiontips, exogtips), rownames(d))
+    .md <- md[match(s, md$seqName), ]
+    sts <- setNames(lubridate::decimal_date(lubridate::ymd(as.character(.md$sampleDate))), 
+                    .md$seqName)
+    dd = d[s, ]
+    # omit sequences with less than missing_threshold coverage
+    nonmissing <- sapply(1:nrow(dd),function(x)sum(base.freq(dd[x,],all=T)[1:4])>missing_threshold)
+    dd <- dd[nonmissing,]
+    rm(d)
+    # label names
+    nms = rownames(dd)
+    demes <- setNames(rep("exog", length(nms)), nms)
+    demes[nms %in% regiontips] <- "Il"
+    nms = paste(sep = "|", nms, sts[nms], paste0("_", demes[nms]))
+    rownames(dd) <- nms
+    # write alignment out
+    write.dna(dd, file = outfn, format = "fasta")
+    invisible(dd)
+  }
+  
+  prep_tip_labels_seijr(algnfn=gisaid_file, outfn=fastafn, regiontips=regiontips, exogtips=exogtips, metadata=md  )
+  
+  rm(md)
+}
+
+make_trees_function <- function(){
   
   tree_file <- paste0("trees.Rds")
   nwk_file <- paste0("startTrees.nwk")
   fastafn <- paste0("algn3.fasta")
   end_files <- c(tree_file,nwk_file)
-  if(sum(file.exists(end_files))==length(end_files)&rerun==F) return()
+  if(sum(file.exists(end_files))==length(end_files)) return()
   
   n_startingtrees = 1
   
@@ -30,7 +95,6 @@ get_region_tree <- function(rerun=F){
     }else{ 
       tr = .mltr(fastafn)
     }
-    saveRDS(tr,'pretree.Rds')
     max_length <- decimal_date(today())-decimal_date(as.Date("2019-10-01"))
     
     treeok <- F
@@ -46,16 +110,13 @@ get_region_tree <- function(rerun=F){
         tr <- ape::drop.tip(tr,tr$tip.label[lnths>max_length])
       }
     }
-      
+    
     # save trees for later
     saveRDS(tds,tree_file)
     rm(tr)
     rm(tds)
   }
-  return()
-  
 }
-
 
 run_skygrowth <- function(region){
   # library(devtools)
@@ -198,3 +259,55 @@ run_skygrowth <- function(region){
 }
   
   
+process_for_shiny_function <- function(region){
+  
+  lineages <- list()
+  
+  files <- list.files('./skygrowth3/')
+  gtdsfiles <- files[sapply(files,function(x)grepl('\\-gtds',x))]
+  sgfiles <- files[sapply(files,function(x)grepl('\\-sg.',x))]
+  ids <- sapply(gtdsfiles,function(txt)gsub('.rds','',gsub('skygrowth3-gtds','',txt)))
+  
+  ## store information
+  trees <- list()
+  sequences <- list()
+  orig_trees <- readRDS(paste0('trees.Rds'))
+  i <- which.max(sapply(orig_trees,function(y)y[[7]]))
+  
+  md <- read.csv( '../datasets/gisaid.tsv',sep='\t', stringsAs=FALSE ) 
+  locs <- c('country','division','location')
+  loc <- locs[which(sapply(locs,function(x)region%in%md[[x]]) )[1]]
+  md$Location <- md[[loc]]
+  md$Date <- md$date
+  md$Sequence <- paste0('hCoV-19/',md$strain) # sapply(md$seqName,function(y)strsplit(y,'\\|')[[1]][1])
+  
+  lineages <- readRDS(paste0('skygrowth3/',sgfiles[i]))
+  x <- readRDS(paste0('skygrowth3/',gtdsfiles[i]))
+  maxind <- which.max(sapply(x,function(y)y[[7]]))
+  trees <- x[[maxind]]
+  trees$tip.label <- unname(trees$tip.label)
+  trees$intree$tip.label <- unname(trees$intree$tip.label)
+  trees$lnd.mean.rate.prior <- NULL
+  sequences <- as.data.frame(cbind(sapply(x[[1]]$tip.label,function(y)strsplit(y,'\\|')[[1]][1]),ids[i])) 
+  colnames(sequences) <- c('Sequence','Lineage')
+  sequences <- left_join(sequences,md[,colnames(md)%in%c('Sequence','Location','Date')],by='Sequence')
+  rownames(sequences) <- NULL
+  trees$data <- as.data.frame(t(sapply(x[[1]]$tip.label,function(y)strsplit(gsub('hCoV-19/','',y),'\\|')[[1]][1:3])),stringsAsFactors=F) # metadata[match(sequences[[i]]$Sequence,metadata$Sequence),] 
+  rownames(trees$data) <- NULL
+  trees$data$Location <- sapply(trees$data[,1],function(x)strsplit(x,'/')[[1]][1])
+  colnames(trees$data) <- c('Sequence name','GISAID','Date','Location')
+  
+  ## store items
+  parms <- list()
+  parms$sequences <- sequences#do.call(rbind,sequences)
+  parms$tree <- trees
+  parms$lineages <- lineages
+  
+  
+  pldf <- compute_timports( orig_trees )
+  parms$imports <- pldf[[1]]
+  
+  saveRDS(parms,paste0(region,'.Rds'))
+  saveRDS(parms,paste0('../input_files/',region,'.Rds'))
+  
+}

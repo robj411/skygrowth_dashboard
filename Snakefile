@@ -25,7 +25,7 @@ rule process_for_shiny:
   params:
     rg="{region}"
   shell:
-    "R --vanilla --args '{params.rg}' < process_for_shiny.R > '{params.rg}.log' 2> '{params.rg}.log'"
+    "R --vanilla --args '{params.rg}' < 4_process_for_shiny.R > '{params.rg}.log' 2> '{params.rg}.log'"
 
 rule run_skygrowth:
   input:
@@ -35,7 +35,7 @@ rule run_skygrowth:
   params:
     rg="{region}"
   shell:
-    "R --vanilla --args '{params.rg}' < run_skygrowth.R  > '{params.rg}.log' 2> '{params.rg}.log'"
+    "R --vanilla --args '{params.rg}' < 3_run_skygrowth.R  > '{params.rg}.log' 2> '{params.rg}.log'"
 
 
 rule make_trees:
@@ -47,7 +47,7 @@ rule make_trees:
   params:
     rg="{region}"
   shell:
-    "R --vanilla --args '{params.rg}' < make_trees.R  > '{params.rg}.log' 2> '{params.rg}.log'"
+    "R --vanilla --args '{params.rg}' < 2_make_trees.R  > '{params.rg}.log' 2> '{params.rg}.log'"
 
 rule make_alignment:
   output:
@@ -58,7 +58,7 @@ rule make_alignment:
     nres=config['n_reservoir'],
     miss=config['missingness_threshold']
   shell:
-    "R --vanilla --args '{params.rg}' '{params.nrg}' '{params.nres}' '{params.miss}' < make_alignment.R  > '{params.rg}.log' 2> '{params.rg}.log'"
+    "R --vanilla --args '{params.rg}' '{params.nrg}' '{params.nres}' '{params.miss}' < 1_get_alignment.R  > '{params.rg}.log' 2> '{params.rg}.log'"
 
 
 
