@@ -1,5 +1,9 @@
 # Skygrowth dashboard
 
+This repository contains code to take a global sequence alignment, extract a subset from a particular region, form a tree, infer epidemic dynamics, and display results in an Rshiny dashboard.
+
+All processing functions are contained within `prep_functions.R`. These can be called either interactively, from a whole script (`full_script.R`), or one at a time, with the scripts numbered 1 to 4, where 1 extracts the local alignment from the global alignment, 2 creates the tree, 3 infers the epidemic dynamics, and 4 processes for presentation. Files `ui.R` and `server.R` define the app to present the results.
+
 ## 1. Prerequisites
 
 ### R requirements
@@ -31,7 +35,7 @@ install_github('mrc-ide/skygrowth')
 
 ### Other requirements
 
-An alignment is required, such as can be downloaded and extracted from [www.gisaid.org](https://www.gisaid.org), e.g. following [JorgensenD/sarscov2_phylo_pipeline](https://github.com/JorgensenD/sarscov2_phylo_pipeline), steps 1 to 3. It should be saved as `algn3.fasta` in the target directory, e.g. [Peru/algn3.fasta](Peru/algn3.fasta). Sequence names should include a GISAID ID and a date in the following format (pipe separated, in positions 2 and 3 respectively): `<name> | <GISDAID ID> | <date> | ...`, e.g. `hCoV-19/Germany/BAV-V2010492/2020|EPI_ISL_420899|2020-03-11|2020.1912568306|_Il`. Sequences whose names include the string "exog" will be identified as exogenous.
+An alignment is required, such as can be downloaded and extracted from [www.gisaid.org](https://www.gisaid.org), as in [JorgensenD/sarscov2_phylo_pipeline](https://github.com/JorgensenD/sarscov2_phylo_pipeline). Sequence names should include a GISAID ID and a date in the following format (pipe separated, in positions 2 and 3 respectively): `<name> | <GISDAID ID> | <date> | ...`, e.g. `hCoV-19/Germany/BAV-V2010492/2020|EPI_ISL_420899|2020-03-11|2020.1912568306|_Il`. Sequences whose names include the string "exog" will be identified as exogenous.
 
 ## 2. Run the script
 
