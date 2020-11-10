@@ -35,7 +35,7 @@ install_github('mrc-ide/skygrowth')
 
 ### Other requirements
 
-An alignment is required, such as can be downloaded and extracted from [www.gisaid.org](https://www.gisaid.org), as in [JorgensenD/sarscov2_phylo_pipeline](https://github.com/JorgensenD/sarscov2_phylo_pipeline). Sequence names should include a GISAID ID and a date in the following format (pipe separated, in positions 2 and 3 respectively): `<name> | <GISDAID ID> | <date> | ...`, e.g. `hCoV-19/Germany/BAV-V2010492/2020|EPI_ISL_420899|2020-03-11|2020.1912568306|_Il`. Sequences whose names include the string "exog" will be identified as exogenous.
+An alignment is required, such as can be downloaded and extracted from [www.gisaid.org](https://www.gisaid.org), as in [JorgensenD/sarscov2_phylo_pipeline](https://github.com/JorgensenD/sarscov2_phylo_pipeline) (steps 1-3 present an alternative means to arrive at a local alignment, which can be used as input to step 2, if it is saved as `region/algn3.fasta`). Sequence names should include a GISAID ID and a date in the following format (pipe separated, in positions 2 and 3 respectively): `<name> | <GISDAID ID> | <date> | ...`, e.g. `hCoV-19/Germany/BAV-V2010492/2020|EPI_ISL_420899|2020-03-11|2020.1912568306|_Il`. Sequences whose names include the string "exog" will be identified as exogenous.
 
 ## 2. Run the script
 
