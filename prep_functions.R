@@ -9,7 +9,8 @@ get_alignment_function <- function(region,n_region,n_reservoir,missing_threshold
   if(!region%in%c(unique(md$country),unique(md$location),unique(md$division))) 
     stop(paste0('\n"',region,'" is not among cities, counties, countries, regions and states.\n\n'))
   seqnm <- paste0('hCoV-19/',md$strain)
-  md$seqName <- sapply(1:length(seqnm),function(x)paste0(c(seqnm[x],md$gisaid_epi_isl[x],md$date[x],md$region[x]),collapse='|'))
+  md$seqName <- sapply(1:length(seqnm),function(x)
+    gsub(' ','',paste0(c(seqnm[x],md$gisaid_epi_isl[x],md$date[x],md$region[x]),collapse='|')))
   md$sampleDate <- md$date
   
   ## path to the GISAID alignment
@@ -52,7 +53,7 @@ get_alignment_function <- function(region,n_region,n_reservoir,missing_threshold
     # label names
     nms = rownames(dd)
     demes <- setNames(rep("exog", length(nms)), nms)
-    demes[nms %in% regiontips] <- "Il"
+    demes[nms %in% regiontips2] <- "Il"
     nms = paste(sep = "|", nms, sts[nms], paste0("_", demes[nms]))
     rownames(dd) <- nms
     # write alignment out
@@ -126,7 +127,6 @@ run_skygrowth <- function(region){
   mdfn = 'datasets/gisaid.tsv' # path to gisaid metadata 
   
   use_gtds = TRUE 
-  minsize = 50
   maxsize = 1000 # will downsample to this value 
   
   nthreads = 1
